@@ -1,0 +1,28 @@
+{
+  "name": "simm",
+  "version": "0.0.1",
+  "description": "Simple manipulation of JS Objects in an immutable manner.",
+  "author": "Andrew Lyons",
+  "license": "ISC",
+  "main": "lib/simm.js",
+  "keywords": [
+    "immutable",
+    "object",
+    "store",
+    "data",
+    "set",
+    "merge",
+    "clone"
+  ],
+  "scripts": {
+    "start": "rollup --config && uglifyjs lib/simm.js --compress --mangle --toplevel --output lib/simm.min.js && rollup --config rollup.processors.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "globby": "^6.1.0",
+    "rollup": "^0.49.2",
+    "rollup-plugin-babel": "^3.0.2",
+    "uglify-js": "^3.0.28"
+  }
+}

@@ -1,0 +1,8 @@
+{
+	"presets": [
+		["env", {
+			"modules": false,
+			"exclude": ["transform-es2015-typeof-symbol"]
+		}]
+	]
+}
