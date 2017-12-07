@@ -12,7 +12,7 @@ const EMPTY_PATH = [];
  * normalisePath(null);    // []
  */
 export function normalisePath(path) {
-	if (path instanceof Array) {
+	if (Array.isArray(path)) {
 		return path;
 	} else if (typeof path === 'string') {
 		return path.split('.');
@@ -40,4 +40,19 @@ export function createObjectWithPath(path, value) {
 		newData[key] = nextData;
 		return newData;
 	}, value);
+}
+
+/**
+ * Creates a partially applied version of a function. This is a simple
+ * implementation with limited use outside of simm, and providing no safety for
+ * bad arguments.
+ */
+export function curry(arity, func) {
+	const allArgs = [];
+	return function curried() {
+		for (let i = 0, l = arguments.length; i < l;) {
+			allArgs.push(arguments[i++]);
+		}
+		return allArgs.length < arity ? curried : func.apply(this, allArgs);
+	};
 }

@@ -1,9 +1,13 @@
-const plainObjects = {
+const objects = {
 	matches(item) {
 		return item != null && typeof item === 'object' && (
 			Object.getPrototypeOf(item) === Object.prototype ||
 			Object.getPrototypeOf(item) === null
 		);
+	},
+
+	isCollection() {
+		return true;
 	},
 
 	has(item, key) {
@@ -34,7 +38,11 @@ const plainObjects = {
 
 	new(item) {
 		return Object.create(Object.getPrototypeOf(item));
+	},
+
+	copy(item) {
+		return Object.assign(objects.new(item), item);
 	}
 };
 
-export default plainObjects;
+export default objects;

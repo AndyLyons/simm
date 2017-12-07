@@ -1,7 +1,10 @@
-const EMPTY_ARRAY = [];
 const arrays = {
 	matches(item) {
-		return item instanceof Array;
+		return Array.isArray(item);
+	},
+
+	isCollection() {
+		return true;
 	},
 
 	has(item, key) {
@@ -22,7 +25,7 @@ const arrays = {
 	},
 
 	merge() {
-		return EMPTY_ARRAY.concat.apply(EMPTY_ARRAY, arguments);
+		return Array.prototype.concat.apply([], arguments);
 	},
 
 	delete(item, key) {
@@ -32,6 +35,10 @@ const arrays = {
 
 	new() {
 		return [];
+	},
+
+	copy(item) {
+		return item.slice();
 	}
 };
 

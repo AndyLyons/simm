@@ -1,99 +1,91 @@
 import * as core from './core';
-import plainObjects from './processors/plainObjects';
-import arrays from './processors/arrays';
-import combineProcessors from './combineProcessors';
 import {normalisePath} from './utility';
 
-/**
- * Returns the set of API methods with a custom configuration.
- */
-const EMPTY_PATH = [];
-function configure(config) {
-	const processor = combineProcessors(config.processors);
-	return {
-		get(prev, path) {
-			return core.get(processor, prev, normalisePath(path));
-		},
+const simm = {
+	get(prev, path, config) {
+		return core.get(prev, normalisePath(path), 0, config);
+	},
 
-		clone(prev) {
-			return core.clone(processor, prev);
-		},
+	set(prev, next, config) {
+		return core.set(prev, [], next, config);
+	},
 
-		cloneAt(prev, path) {
-			return core.cloneAt(processor, prev, normalisePath(path));
-		},
+	setAt(prev, path, next, config) {
+		return core.set(prev, normalisePath(path), next, config);
+	},
 
-		set(prev, next) {
-			return core.set(processor, prev, EMPTY_PATH, next);
-		},
+	merge(prev, next, config) {
+		return core.merge(prev, [], next, config);
+	},
 
-		setAt(prev, path, next) {
-			return core.set(processor, prev, normalisePath(path), next);
-		},
+	mergeAt(prev, path, next, config) {
+		return core.merge(prev, normalisePath(path), next, config);
+	},
 
-		merge(prev, next) {
-			return core.merge(processor, prev, EMPTY_PATH, next);
-		},
+	remove(prev, path, config) {
+		return core.remove(prev, normalisePath(path), config);
+	},
 
-		mergeAt(prev, path, next) {
-			return core.merge(processor, prev, normalisePath(path), next);
-		},
+	clone(item, shallow, config) {
+		return core.clone(item, shallow, config);
+	},
 
-		remove(prev, path) {
-			return core.remove(processor, prev, normalisePath(path));
-		},
+	createStore(store, config) {
+		return {
+			get(path) {
+				return simm.get(store, path, config);
+			},
 
-		createStore(store) {
-			return createStore(processor, store);
-		}
-	};
-}
+			set(next) {
+				return store = simm.set(store, next, config);
+			},
 
-/**
- * Creates a data store with the API methods, optionally with an initial state.
- * The data store removes the need for the `prev` data parameter, as all changes
- * are applied to the persistent store object.
- */
-function createStore(processor, store) {
-	return {
-		get(path) {
-			return core.get(processor, store, normalisePath(path));
-		},
+			setAt(path, next) {
+				return store = simm.setAt(store, path, next, config);
+			},
 
-		clone() {
-			return core.clone(processor, store);
-		},
+			merge(next) {
+				return store = simm.merge(store, next, config);
+			},
 
-		cloneAt(path) {
-			return core.cloneAt(processor, store, normalisePath(path));
-		},
+			mergeAt(path, next) {
+				return store = simm.mergeAt(store, path, next, config);
+			},
 
-		set(next) {
-			return store = core.set(processor, store, EMPTY_PATH, next);
-		},
+			remove(path) {
+				return store = simm.remove(store, path, config);
+			}
+		};
+	}
+};
 
-		setAt(path, next) {
-			return store = core.set(processor, store, normalisePath(path), next);
-		},
+// function configure(methods, settings) {
+// 	const config = {
+// 		pcsr: combineProcessors(settings.processors)
+// 	};
 
-		merge(next) {
-			return store = core.merge(processor, store, EMPTY_PATH, next);
-		},
+// 	if (typeof methods === 'function') {
+// 		return methods(config);
+// 	}
 
-		mergeAt(path, next) {
-			return store = core.merge(processor, store, normalisePath(path), next);
-		},
+// 	const configured = {};
+// 	const keys = Object.keys(methods);
+// 	for (let i = 0, l = keys.length; i < l;) {
+// 		const key = keys[i++];
+// 		configured[key] = methods[key](config);
+// 	}
+// 	return configured;
+// }
 
-		remove(path) {
-			return store = core.remove(processor, store, normalisePath(path));
-		}
-	};
-}
+// const defaultConfig = {processors:[arrays, objects]};
+// const get = configure(_get, defaultConfig);
+// const set = configure(_set, defaultConfig);
+// const createStore = configure(_createStore, defaultConfig);
 
-const simmDefault = configure({
-	processors: [plainObjects, arrays],
-	aggressive: false
-});
-simmDefault.configure = configure;
+// const simmDefault = configure({
+// 	processors: [objects, arrays],
+// 	aggressive: false
+// });
+// simmDefault.configure = configure;
 
-export default simmDefault;
+export default simm;
